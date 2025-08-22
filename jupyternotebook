@@ -1,0 +1,43 @@
+# Importa as bibliotecas necessárias
+# Rode: !pip install pandas scikit-learn
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+# Cria um DataFrame fictício com dados para demonstração
+# Na vida real, você usaria dados do SISVAN, por exemplo
+data = {
+    'PIB_PER_CAPITA': [5000, 10000, 2000, 12000, 8000, 3000, 15000, 6000],
+    'NUM_PSFS': [10, 5, 2, 7, 4, 1, 8, 3],
+    'POBRES': [0.6, 0.2, 0.9, 0.1, 0.4, 0.8, 0.15, 0.5],
+    'DESNUTRICAO': [1, 0, 1, 0, 0, 1, 0, 1]  # 1: sim, 0: não
+}
+df_ml = pd.DataFrame(data)
+
+# Define as variáveis de entrada (X) e a variável alvo (y)
+X = df_ml[['PIB_PER_CAPITA', 'NUM_PSFS', 'POBRES']]
+y = df_ml['DESNUTRICAO']
+
+# Divide os dados em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Cria e treina o modelo de regressão logística
+modelo = LogisticRegression()
+modelo.fit(X_train, y_train)
+
+# Faz previsões com os dados de teste
+predicoes = modelo.predict(X_test)
+
+# Mostra a precisão do modelo
+print("Relatório de Classificação:")
+print(classification_report(y_test, predicoes))
+
+# Exemplo de uma nova previsão
+nova_regiao = pd.DataFrame([[4000, 2, 0.7]], columns=['PIB_PER_CAPITA', 'NUM_PSFS', 'POBRES'])
+previsao = modelo.predict(nova_regiao)
+
+if previsao[0] == 1:
+    print("\nPrevisão: Alta probabilidade de desnutrição nesta região.")
+else:
+    print("\nPrevisão: Baixa probabilidade de desnutrição nesta região.")
